@@ -28,8 +28,8 @@ Sau lab, bạn có thể:
 
 - Source đã hoàn thiện các `TODO` bắt buộc.
 - `submission/REPORT.md` đã điền và evidence đặt trong `submission/evidence/`.
-- Kết quả tests, log validator và dashboard validator trên commit cuối.
-- Ảnh dashboard có dữ liệu; ít nhất 10 trace IDs; một trace waterfall; prompt v1/v2 và evidence rollback.
+- Ba output text cho tests, log validator và dashboard validator trên commit cuối.
+- Đúng 5 ảnh runtime theo `docs/SUBMISSION.md`; các ảnh được tái sử dụng để chứng minh logging, tracing, prompt, dashboard và incident.
 - Một SLO/error budget, ba alert symptom-based có `duration`, kênh Slack và runbook.
 
 ## Đọc nhanh để hiểu bài lab
@@ -211,7 +211,7 @@ SLO là mục tiêu chất lượng, ví dụ `99.5% request thành công và la
 
 ### CP3 — Challenge chính thức
 
-Chỉ chạy khi Lab Coach thông báo mở challenge của K4-L3B. Tại CP3, Lab Coach gửi riêng file đúng lớp; lưu file đó tại `config/challenge.json`. File này đã được `.gitignore` và **không được** force-add/commit/push:
+Chỉ chạy khi Lab Coach thông báo mở challenge của K4-L3B. Challenge đã được release trong bản mới nhất của starter. Nếu đã fork trước CP3, chọn **Sync fork → Update branch** trên GitHub rồi chạy `git pull --ff-only`; xác nhận có `config/challenge.json` trước khi chạy:
 
 ```bash
 python scripts/inject_incident.py
@@ -227,7 +227,7 @@ python scripts/load_test.py --challenge --concurrency 5
 
 Không bắt đầu bằng cách đoán root cause hoặc mở trace ngẫu nhiên. Luôn dùng metrics để khoanh vùng triệu chứng trước, dùng logs để chọn request cụ thể, rồi mới dùng trace để tìm bước gây lỗi hoặc chậm.
 
-Không tự tạo, sửa, chia sẻ hoặc lấy `config/challenge.json` từ lớp khác. Nếu chưa nhận file riêng, tiếp tục practice bằng tham số `--scenario`; không chạy challenge chính thức.
+Không tự tạo, sửa hoặc lấy `config/challenge.json` từ lớp khác. Nếu chưa có file, sync/pull starter mới nhất; không tự đoán nội dung challenge.
 
 ## Kiểm tra trước khi nộp
 
@@ -240,6 +240,7 @@ git log -1 --oneline
 ```
 
 - [ ] Không có `.env`, secret, `.venv/`, PII thô hoặc evidence của học viên/lớp khác.
+- [ ] Có đúng 3 output text và 5 ảnh runtime theo `docs/SUBMISSION.md`.
 - [ ] `submission/REPORT.md` đã đủ; mọi ảnh dùng đường dẫn tương đối và mở được.
 - [ ] Bạn demo và giải thích được luồng Metrics → Logs → Traces → Root cause.
 

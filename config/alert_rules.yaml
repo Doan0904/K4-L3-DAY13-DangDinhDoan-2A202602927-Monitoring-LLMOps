@@ -1,25 +1,39 @@
 alerts:
-  - name: TODO_alert_1
-    severity: TODO
-    condition: TODO
-    duration: TODO
+  - name: HighLatencyP95
+    severity: warning
+    # Baseline P95 ~153ms; SLO line 3000ms. Cảnh báo sớm ở 1500ms (~10x baseline) để bắt
+    # regression kiểu rag_slow (P95 ~2650ms) trước khi đốt error budget.
+    condition: 'p95(response_sent.latency_ms) > 1500 over 5m window'
+    duration: 5m
     type: symptom-based
     channel: slack
-    owner: TODO
+    slack_channel: '#k4-l3b-alerts'
+    owner: student-2A202602927
+    slo: fast_successful_requests
+    user_impact: Người dùng phải chờ lâu hơn nhiều so với bình thường trước khi nhận câu trả lời.
     runbook: docs/alerts.md#alert-1
-  - name: TODO_alert_2
-    severity: TODO
-    condition: TODO
-    duration: TODO
+  - name: HighErrorRateOrRetrievalFailure
+    severity: critical
+    # request_failed trực tiếp tiêu error budget (SLO 99.5%); retrieval success < 90% là guardrail trong slo.yaml.
+    condition: 'count(request_failed) / count(request_received) * 100 > 2 OR tool_success_rate_pct(tool_name == "retrieval") < 90 over 5m window'
+    duration: 3m
     type: symptom-based
     channel: slack
-    owner: TODO
+    slack_channel: '#k4-l3b-oncall'
+    owner: student-2A202602927
+    slo: fast_successful_requests
+    user_impact: Người dùng nhận HTTP 500 hoặc câu trả lời thiếu context từ tài liệu.
     runbook: docs/alerts.md#alert-2
-  - name: TODO_alert_3
-    severity: TODO
-    condition: TODO
-    duration: TODO
+  - name: CostPerRequestSpike
+    severity: warning
+    # Baseline ~0.0023 USD/request và ~145 tokens_out/request; cảnh báo khi gấp ~2 lần baseline
+    # dù traffic không tăng (tức là chi phí mỗi request tăng, không phải do tải).
+    condition: 'avg(response_sent.cost_usd) > 0.005 OR avg(response_sent.tokens_out) > 300 over 15m window'
+    duration: 10m
     type: symptom-based
     channel: slack
-    owner: TODO
+    slack_channel: '#k4-l3b-alerts'
+    owner: student-2A202602927
+    slo: guardrails.daily_cost_usd_max
+    user_impact: Chi phí vận hành tăng nhanh, có nguy cơ vượt budget 2.5 USD/ngày; câu trả lời dài bất thường.
     runbook: docs/alerts.md#alert-3

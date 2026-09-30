@@ -4,17 +4,19 @@ Danh sách chính thức, quy tắc chụp và cách nộp nằm tại [SUBMISSI
 
 ## Evidence runtime bắt buộc
 
-- [ ] Kết quả cuối của `python -m pytest -q`.
-- [ ] `validate_logs.py` đạt tối thiểu 80/100.
-- [ ] `validate_dashboard.py` đạt 6/6.
-- [ ] Structured log có `correlation_id` và metadata.
-- [ ] PII giả đã được redact trong output thực tế.
-- [ ] Tên project Langfuse cá nhân và danh sách tối thiểu 10 traces do học viên tự tạo.
-- [ ] Một trace waterfall có root, retrieval và generation.
-- [ ] Trace metadata có correlation ID, prompt version/label, token và cost.
-- [ ] Prompt v1/v2 và bằng chứng promote/rollback.
-- [ ] Dashboard runtime đủ 6 panel, time range, đơn vị và threshold.
-- [ ] Incident metric, incident log và incident trace nối được bằng cùng correlation ID/khoảng sự cố.
+Ba output text:
+
+- [ ] `pytest.txt`.
+- [ ] `log-validator.txt` đạt tối thiểu 80/100 và không phát hiện PII leak.
+- [ ] `dashboard-validator.txt` đạt 6/6.
+
+Đúng năm ảnh:
+
+- [ ] `01-incident-log.png`: structured log và incident log.
+- [ ] `02-trace-list.png`: project cá nhân và tối thiểu 10 traces.
+- [ ] `03-incident-trace.png`: waterfall, metadata và incident span.
+- [ ] `04-prompt-versioning.png`: v1/v2, labels, promote và rollback.
+- [ ] `05-dashboard-incident.png`: 6 panel và incident metric.
 
 ## Artifact kiểm tra trực tiếp trên repo
 
@@ -32,5 +34,5 @@ Không cần chụp toàn bộ code. Dẫn link tới:
 - Che secret và PII; không dùng dữ liệu thật.
 - Trace/prompt phải thuộc project cá nhân `day13-k4-l3b-<MSSV>`; không chụp trang API Keys.
 - Đặt file trong `submission/evidence/`.
-- Dẫn đường dẫn tương đối từ report, ví dụ `evidence/07-trace-waterfall.png`.
+- Dẫn đường dẫn tương đối từ report, ví dụ `evidence/03-incident-trace.png`.
 - Metric, log và trace của incident phải cùng chỉ về một nguyên nhân.

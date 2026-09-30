@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K4-L3B Day 13 Monitoring &amp; LLMOps</title>
+<style>
+:root { --bg:#f6f7f9; --card:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; }
+* { box-sizing:border-box; }
+body { margin:0; font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--ink); }
+.top { padding:16px 24px; border-bottom:1px solid var(--line); background:var(--card); display:flex; flex-wrap:wrap; gap:8px 24px; align-items:baseline; }
+.top h1 { font-size:18px; margin:0; }
+.top span { color:var(--muted); }
+.grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px; padding:16px 24px; }
+@media (max-width:1100px) { .grid { grid-template-columns:1fr; } }
+.panel { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px 16px; }
+.panel header { display:flex; justify-content:space-between; align-items:center; }
+.panel h2 { font-size:15px; margin:0; }
+.meta { color:var(--muted); margin:4px 0 8px; font-size:12px; }
+.badge { font-size:11px; font-weight:600; padding:2px 8px; border-radius:999px; }
+.badge.ok { background:#dcfce7; color:#166534; } .badge.bad { background:#fee2e2; color:#991b1b; } .badge.na { background:#f3f4f6; color:#4b5563; }
+.stats { display:flex; flex-wrap:wrap; gap:6px 18px; margin-bottom:6px; }
+.stat { display:flex; flex-direction:column; }
+.stat .v { font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
+.stat .l { font-size:11px; color:var(--muted); }
+.chart { width:100%; height:auto; }
+.chart .grid { stroke:var(--line); } .chart .tick { font-size:10px; fill:var(--muted); }
+.chart .threshold { stroke:#dc2626; stroke-dasharray:5 4; stroke-width:1.5; }
+.legend { display:flex; flex-wrap:wrap; gap:12px; font-size:11px; color:var(--muted); }
+.legend i { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; border-radius:2px; }
+.legend i.th { height:0; border-top:2px dashed #dc2626; border-radius:0; }
+.note { font-size:11px; color:var(--muted); margin:4px 0 0; }
+</style></head><body>
+<div class="top">
+  <h1>K4-L3B Day 13 Monitoring &amp; LLMOps</h1>
+  <span>time range: <b>last 60 min</b> (2026-09-30 03:13 → 04:12:36 UTC)</span>
+  <span>refresh: 30s</span>
+  <span>source: data/logs.jsonl · received=10 sent=10 failed=0</span>
+</div>
+<main class="grid">
+<section class="panel">
+  <header><h2>Latency percentiles and TTFT</h2><span class="badge ok">OK</span></header>
+  <p class="meta">unit: <b>ms</b> · threshold: <b>p95 ≤ 3000 ms</b></p>
+  <div class="stats"><div class="stat"><span class="v">2,653</span><span class="l">P50 ms</span></div><div class="stat"><span class="v">2,660</span><span class="l">P95 ms</span></div><div class="stat"><span class="v">2,660</span><span class="l">P99 ms</span></div><div class="stat"><span class="v">50</span><span class="l">TTFT P95 ms</span></div></div>
+  <svg viewBox="0 0 520 170" class="chart" role="img"><line x1="52" x2="508" y1="144.0" y2="144.0" class="grid"/><text x="46" y="148.0" class="tick" text-anchor="end">0</text><line x1="52" x2="508" y1="78.0" y2="78.0" class="grid"/><text x="46" y="82.0" class="tick" text-anchor="end">1,725</text><line x1="52" x2="508" y1="12.0" y2="12.0" class="grid"/><text x="46" y="16.0" class="tick" text-anchor="end">3,450</text><text x="55.8" y="164" class="tick" text-anchor="middle">03:13</text><text x="169.8" y="164" class="tick" text-anchor="middle">03:28</text><text x="283.8" y="164" class="tick" text-anchor="middle">03:43</text><text x="397.8" y="164" class="tick" text-anchor="middle">03:58</text><text x="504.2" y="164" class="tick" text-anchor="end">04:12</text><circle cx="481.4" cy="42.2" r="2.5" fill="#2563eb"/><circle cx="504.2" cy="138.1" r="2.5" fill="#2563eb"/><circle cx="481.4" cy="142.1" r="2.5" fill="#d97706"/><circle cx="504.2" cy="142.1" r="2.5" fill="#d97706"/><line x1="52" x2="508" y1="29.2" y2="29.2" class="threshold"/></svg>
+  <div class="legend"><span><i style="background:#2563eb"></i>latency P95 / phút</span><span><i style="background:#d97706"></i>TTFT P95 / phút</span><span><i class="th"></i>threshold</span></div>
+</section>
+<section class="panel">
+  <header><h2>Request traffic</h2><span class="badge ok">OK</span></header>
+  <p class="meta">unit: <b>requests_per_minute</b> · threshold: <b>rate_per_minute ≥ 1 requests_per_minute</b></p>
+  <div class="stats"><div class="stat"><span class="v">10</span><span class="l">requests (60m)</span></div><div class="stat"><span class="v">5.0</span><span class="l">req/phút (phút có traffic)</span></div></div>
+  <svg viewBox="0 0 520 170" class="chart" role="img"><line x1="52" x2="508" y1="144.0" y2="144.0" class="grid"/><text x="46" y="148.0" class="tick" text-anchor="end">0</text><line x1="52" x2="508" y1="78.0" y2="78.0" class="grid"/><text x="46" y="82.0" class="tick" text-anchor="end">3</text><line x1="52" x2="508" y1="12.0" y2="12.0" class="grid"/><text x="46" y="16.0" class="tick" text-anchor="end">6</text><text x="55.8" y="164" class="tick" text-anchor="middle">03:13</text><text x="169.8" y="164" class="tick" text-anchor="middle">03:28</text><text x="283.8" y="164" class="tick" text-anchor="middle">03:43</text><text x="397.8" y="164" class="tick" text-anchor="middle">03:58</text><text x="504.2" y="164" class="tick" text-anchor="end">04:12</text><rect x="477.6" y="29.2" width="6.6" height="114.8" fill="#2563eb"/><rect x="500.4" y="29.2" width="6.6" height="114.8" fill="#2563eb"/><line x1="52" x2="508" y1="121.0" y2="121.0" class="threshold"/></svg>
+  <div class="legend"><span><i style="background:#2563eb"></i>request_received / phút</span><span><i class="th"></i>threshold</span></div>
+</section>
+<section class="panel">
+  <header><h2>Error rate and retrieval success</h2><span class="badge ok">OK</span></header>
+  <p class="meta">unit: <b>percent</b> · threshold: <b>error_rate_pct ≤ 2 percent</b></p>
+  <div class="stats"><div class="stat"><span class="v">0.00</span><span class="l">error rate %</span></div><div class="stat"><span class="v">100.0</span><span class="l">retrieval success %</span></div><div class="stat"><span class="v">không có lỗi</span><span class="l">breakdown</span></div></div>
+  <svg viewBox="0 0 520 170" class="chart" role="img"><line x1="52" x2="508" y1="144.0" y2="144.0" class="grid"/><text x="46" y="148.0" class="tick" text-anchor="end">0</text><line x1="52" x2="508" y1="78.0" y2="78.0" class="grid"/><text x="46" y="82.0" class="tick" text-anchor="end">1</text><line x1="52" x2="508" y1="12.0" y2="12.0" class="grid"/><text x="46" y="16.0" class="tick" text-anchor="end">2</text><text x="55.8" y="164" class="tick" text-anchor="middle">03:13</text><text x="169.8" y="164" class="tick" text-anchor="middle">03:28</text><text x="283.8" y="164" class="tick" text-anchor="middle">03:43</text><text x="397.8" y="164" class="tick" text-anchor="middle">03:58</text><text x="504.2" y="164" class="tick" text-anchor="end">04:12</text><circle cx="481.4" cy="144.0" r="2.5" fill="#2563eb"/><circle cx="504.2" cy="144.0" r="2.5" fill="#2563eb"/><line x1="52" x2="508" y1="29.2" y2="29.2" class="threshold"/></svg>
+  <div class="legend"><span><i style="background:#2563eb"></i>error rate % / phút</span><span><i class="th"></i>threshold</span></div>
+</section>
+<section class="panel">
+  <header><h2>Cost over time</h2><span class="badge ok">OK</span></header>
+  <p class="meta">unit: <b>usd</b> · threshold: <b>total ≤ 2.5 usd</b></p>
+  <div class="stats"><div class="stat"><span class="v">$0.0201</span><span class="l">total USD (60m)</span></div></div>
+  <svg viewBox="0 0 520 170" class="chart" role="img"><line x1="52" x2="508" y1="144.0" y2="144.0" class="grid"/><text x="46" y="148.0" class="tick" text-anchor="end">0</text><line x1="52" x2="508" y1="78.0" y2="78.0" class="grid"/><text x="46" y="82.0" class="tick" text-anchor="end">0.006</text><line x1="52" x2="508" y1="12.0" y2="12.0" class="grid"/><text x="46" y="16.0" class="tick" text-anchor="end">0.012</text><text x="55.8" y="164" class="tick" text-anchor="middle">03:13</text><text x="169.8" y="164" class="tick" text-anchor="middle">03:28</text><text x="283.8" y="164" class="tick" text-anchor="middle">03:43</text><text x="397.8" y="164" class="tick" text-anchor="middle">03:58</text><text x="504.2" y="164" class="tick" text-anchor="end">04:12</text><rect x="477.6" y="29.2" width="6.6" height="114.8" fill="#2563eb"/><rect x="500.4" y="44.9" width="6.6" height="99.1" fill="#2563eb"/></svg>
+  <div class="legend"><span><i style="background:#2563eb"></i>sum(cost_usd) / phút</span></div><p class="note">Threshold áp dụng cho tổng cửa sổ 60m (không vẽ lên chart theo phút).</p>
+</section>
+<section class="panel">
+  <header><h2>Input and output tokens</h2><span class="badge ok">OK</span></header>
+  <p class="meta">unit: <b>tokens</b> · threshold: <b>sum_by_field ≤ 50000 tokens</b></p>
+  <div class="stats"><div class="stat"><span class="v">528</span><span class="l">tokens_in</span></div><div class="stat"><span class="v">1,232</span><span class="l">tokens_out</span></div></div>
+  <svg viewBox="0 0 520 170" class="chart" role="img"><line x1="52" x2="508" y1="144.0" y2="144.0" class="grid"/><text x="46" y="148.0" class="tick" text-anchor="end">0</text><line x1="52" x2="508" y1="78.0" y2="78.0" class="grid"/><text x="46" y="82.0" class="tick" text-anchor="end">382</text><line x1="52" x2="508" y1="12.0" y2="12.0" class="grid"/><text x="46" y="16.0" class="tick" text-anchor="end">765</text><text x="55.8" y="164" class="tick" text-anchor="middle">03:13</text><text x="169.8" y="164" class="tick" text-anchor="middle">03:28</text><text x="283.8" y="164" class="tick" text-anchor="middle">03:43</text><text x="397.8" y="164" class="tick" text-anchor="middle">03:58</text><text x="504.2" y="164" class="tick" text-anchor="end">04:12</text><rect x="477.6" y="98.4" width="2.8" height="45.6" fill="#2563eb"/><rect x="500.4" y="98.4" width="2.8" height="45.6" fill="#2563eb"/><rect x="480.4" y="29.2" width="2.8" height="114.8" fill="#d97706"/><rect x="503.2" y="46.1" width="2.8" height="97.9" fill="#d97706"/></svg>
+  <div class="legend"><span><i style="background:#2563eb"></i>tokens_in / phút</span><span><i style="background:#d97706"></i>tokens_out / phút</span></div><p class="note">Threshold áp dụng cho tổng cửa sổ 60m (không vẽ lên chart theo phút).</p>
+</section>
+<section class="panel">
+  <header><h2>Quality proxy</h2><span class="badge ok">OK</span></header>
+  <p class="meta">unit: <b>score_0_to_1</b> · threshold: <b>mean ≥ 0.75 score_0_to_1</b></p>
+  <div class="stats"><div class="stat"><span class="v">0.840</span><span class="l">mean quality</span></div></div>
+  <svg viewBox="0 0 520 170" class="chart" role="img"><line x1="52" x2="508" y1="144.0" y2="144.0" class="grid"/><text x="46" y="148.0" class="tick" text-anchor="end">0</text><line x1="52" x2="508" y1="78.0" y2="78.0" class="grid"/><text x="46" y="82.0" class="tick" text-anchor="end">0.483</text><line x1="52" x2="508" y1="12.0" y2="12.0" class="grid"/><text x="46" y="16.0" class="tick" text-anchor="end">0.966</text><text x="55.8" y="164" class="tick" text-anchor="middle">03:13</text><text x="169.8" y="164" class="tick" text-anchor="middle">03:28</text><text x="283.8" y="164" class="tick" text-anchor="middle">03:43</text><text x="397.8" y="164" class="tick" text-anchor="middle">03:58</text><text x="504.2" y="164" class="tick" text-anchor="end">04:12</text><circle cx="481.4" cy="29.2" r="2.5" fill="#2563eb"/><circle cx="504.2" cy="29.2" r="2.5" fill="#2563eb"/><line x1="52" x2="508" y1="41.5" y2="41.5" class="threshold"/></svg>
+  <div class="legend"><span><i style="background:#2563eb"></i>mean(quality_score) / phút</span><span><i class="th"></i>threshold</span></div>
+</section></main>
+</body></html>

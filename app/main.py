@@ -47,10 +47,14 @@ async def metrics() -> dict:
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: Request, body: ChatRequest) -> ChatResponse:
-    # TODO: Enrich logs with request context (user_id_hash, session_id, feature, model, env)
-    # bind_contextvars(...)
-    
+async def chat(request: Request, body: ChatRequest) -> ChatResponse | JSONResponse:
+    bind_contextvars(
+        user_id_hash=hash_user_id(body.user_id),
+        session_id=body.session_id,
+        feature=body.feature,
+        model=agent.model,
+        env=os.getenv("APP_ENV", "dev"),
+    )
     log.info(
         "request_received",
         service="api",
@@ -98,7 +102,11 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
             tool_success=False if isinstance(exc, RuntimeError) else None,
             payload={"detail": str(exc), "message_preview": summarize_text(body.message)},
         )
-        raise HTTPException(status_code=500, detail=error_type) from exc
+        # Trả correlation_id trong body lỗi để người dùng/on-call tra ngược log và trace.
+        return JSONResponse(
+            status_code=500,
+            content={"detail": error_type, "correlation_id": request.state.correlation_id},
+        )
 
 
 @app.post("/incidents/{name}/enable")

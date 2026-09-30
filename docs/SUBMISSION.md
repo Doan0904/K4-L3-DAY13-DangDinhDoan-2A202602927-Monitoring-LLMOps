@@ -32,7 +32,7 @@ Commit SHA phải tồn tại trên remote và chứa đầy đủ source, confi
 ```text
 K4-L3-DAY13-HoVaTen-MSSV-Monitoring-LLMOps/
 ├── app/                         # source đã hoàn thiện
-├── config/                      # dashboard, SLO, alert và challenge gốc
+├── config/                      # dashboard, SLO và alert; challenge không nộp cùng evidence
 ├── data/                        # input mẫu; không commit log chứa PII
 ├── docs/
 │   └── alerts.md                # runbook cho ba alert
@@ -57,50 +57,63 @@ Evidence phải chứng minh kết quả chạy trên đúng commit SHA được
 - Ảnh phải đọc được tên màn hình/panel, giá trị, time range và ID liên quan.
 - Không cắt mất thông tin cần đối chiếu, nhưng phải che secret và PII.
 - Dùng dữ liệu test của repo; không dùng dữ liệu thật của người dùng.
-- Test/validator có thể lưu dạng ảnh `.png` hoặc output text `.txt`.
+- Test và validator lưu dạng `.txt`; không cần chụp màn hình terminal.
 - Source, YAML, runbook và commit được dẫn bằng đường dẫn/link; không cần chụp toàn bộ code.
 - Mọi đường dẫn trong report phải là đường dẫn tương đối và mở được trên GitHub.
 - Không dùng source, report, trace ID hoặc evidence của học viên khác/lớp khác.
 - Các ảnh trace/prompt phải lấy từ project Langfuse cá nhân `day13-k4-l3b-<MSSV>`; ảnh nên nhìn thấy tên project nhưng tuyệt đối không mở/chụp trang API Keys.
 
-Phân biệt nguồn evidence:
-
-- `04`, `05` và `13`: chụp structured log do ứng dụng tạo trong terminal hoặc `data/logs.jsonl`.
-- `06`–`10` và `14`: chụp traces/observations hoặc prompt versions trong project Langfuse cá nhân.
-- Không gọi ảnh trace Langfuse là “log”; dùng `correlation_id` để chứng minh log và trace thuộc cùng request.
+Chỉ nộp đúng **5 ảnh runtime**. Mỗi ảnh được tái sử dụng cho nhiều tiêu chí để tránh chụp trùng. Không gọi ảnh trace Langfuse là “log”; dùng `correlation_id` để chứng minh log và trace thuộc cùng request.
 
 Từ `submission/REPORT.md`, dẫn ảnh như sau:
 
 ```markdown
-![Dashboard overview](evidence/11-dashboard-overview.png)
+![Incident trace](evidence/03-incident-trace.png)
 ```
 
 Không dùng đường dẫn cục bộ như `C:\Users\...` hoặc `/home/student/...`.
 
-## 5. Checklist evidence bắt buộc
+## 5. Evidence bắt buộc: 3 file text và 5 ảnh
 
-Tên file dưới đây là gợi ý; có thể dùng tên khác nếu `REPORT.md` dẫn đúng.
+### 5.1. Ba kết quả lệnh — lưu dạng text
 
-| Evidence | Nội dung phải nhìn thấy hoặc kiểm chứng được | File gợi ý |
+macOS/Linux:
+
+```bash
+python -m pytest -q 2>&1 | tee submission/evidence/pytest.txt
+python scripts/validate_logs.py 2>&1 | tee submission/evidence/log-validator.txt
+python scripts/validate_dashboard.py 2>&1 | tee submission/evidence/dashboard-validator.txt
+```
+
+Windows PowerShell:
+
+```powershell
+python -m pytest -q 2>&1 | Tee-Object -FilePath submission/evidence/pytest.txt
+python scripts/validate_logs.py 2>&1 | Tee-Object -FilePath submission/evidence/log-validator.txt
+python scripts/validate_dashboard.py 2>&1 | Tee-Object -FilePath submission/evidence/dashboard-validator.txt
+```
+
+### 5.2. Năm ảnh runtime
+
+| Ảnh | Chụp màn hình nào | Một ảnh được dùng để chứng minh |
 |---|---|---|
-| Test cuối | Lệnh `python -m pytest -q`, số test pass/fail | `01-pytest.png` hoặc `.txt` |
-| Log validator | Kết quả cuối của `validate_logs.py`, điểm tối thiểu 80/100 | `02-log-validator.png` |
-| Dashboard validator | Kết quả `validate_dashboard.py`, đủ 6/6 | `03-dashboard-validator.png` |
-| Structured log | Log JSON có timestamp, event, `correlation_id`, model, env, feature và latency | `04-structured-log.png` |
-| PII redaction | Input test chứa PII giả và log đầu ra đã che email/điện thoại/CCCD/thẻ | `05-pii-redaction.png` |
-| Trace list | Tên project cá nhân và danh sách tối thiểu 10 traces do chính học viên tự chạy workload để tạo | `06-trace-list.png` |
-| Trace waterfall | Một trace có root observation, retrieval và generation theo đúng quan hệ cha-con | `07-trace-waterfall.png` |
-| Trace metadata | `correlation_id`, model, prompt name/version/label, token và cost; không có PII thô | `08-trace-metadata.png` |
-| Prompt versions | Trong project cá nhân: prompt v1/v2 và các label `baseline`, `candidate`, `production` | `09-prompt-versions.png` |
-| Prompt rollback | Trạng thái trước/sau khi promote hoặc rollback `production`; kèm trace ID của hai version trong report | `10-prompt-rollback.png` |
-| Dashboard runtime | Đủ 6 panel, có dữ liệu, time range, đơn vị và threshold/SLO line | `11-dashboard-overview.png` |
-| Incident metric | Metric bất thường và khoảng thời gian xảy ra challenge | `12-incident-metric.png` |
-| Incident log | Log line bất thường có `correlation_id` | `13-incident-log.png` |
-| Incident trace | Trace có cùng `correlation_id`, thấy span gây chậm/lỗi | `14-incident-trace.png` |
+| `01-incident-log.png` | Log của request bất thường trong `data/logs.jsonl` | structured log, metadata và incident log |
+| `02-trace-list.png` | Trang Langfuse Traces có ít nhất 10 traces | project cá nhân và số lượng traces |
+| `03-incident-trace.png` | Trace cùng `correlation_id` với ảnh 01 | waterfall, metadata và span gây sự cố |
+| `04-prompt-versioning.png` | Trace `production` v2 và trang prompt sau rollback đặt cạnh nhau | v1/v2, labels, promote và rollback |
+| `05-dashboard-incident.png` | Dashboard cuối sau khi chạy challenge | 6 panel và metric bất thường của incident |
 
-Nếu dashboard không thể đọc rõ trong một ảnh, tách thành `11a-dashboard-latency-errors.png` và `11b-dashboard-cost-token-quality.png`.
+### 5.3. Cách chụp rõ ràng
 
-## 6. Evidence nào không cần chụp ảnh?
+1. **Ảnh 01 — log:** mở `data/logs.jsonl` bằng VS Code, tìm `correlation_id` của request bất thường và bật Word Wrap bằng `Alt+Z`. Chụp dòng log đọc được `event`, `correlation_id`, model, env, feature và latency/error. PII được kiểm tra bằng `log-validator.txt` và tests, không cần ảnh riêng.
+2. **Ảnh 02 — trace list:** mở project Langfuse cá nhân → **Traces**, chọn time range chứa lần chạy mới nhất, thu gọn sidebar. Ảnh phải thấy tên project và ít nhất 10 dòng trace.
+3. **Ảnh 03 — incident trace:** tìm đúng `correlation_id` ở ảnh 01, mở trace và expand root/retrieval/generation. Ảnh phải thấy trace ID, span tree, duration/status, correlation ID, prompt version/label, token và cost.
+4. **Ảnh 04 — prompt:** làm theo [PROMPT_VERSIONING.md](PROMPT_VERSIONING.md). Đặt trace `production` v2 bên trái và trang versions sau rollback bên phải; chụp toàn màn hình.
+5. **Ảnh 05 — dashboard:** chọn time range 60 phút chứa challenge, thu gọn sidebar và zoom 70–80%. Ảnh phải thấy đủ 6 panel, đơn vị, threshold/SLO line và metric bất thường. Nếu trang dài trên Chrome/Edge: nhấn `F12` → `Ctrl + Shift + P` (`Command + Shift + P` trên macOS) → gõ **Capture full size screenshot** → Enter; hoặc export một PNG từ công cụ dashboard.
+
+Windows có thể dùng `Win + Shift + S`; macOS dùng `Command + Shift + 4`. Không ghép, chỉnh sửa hoặc làm sai lệch ảnh.
+
+## 6. Nội dung không cần chụp ảnh
 
 Không cần screenshot các file sau vì giảng viên kiểm tra trực tiếp trên commit:
 
@@ -108,7 +121,8 @@ Không cần screenshot các file sau vì giảng viên kiểm tra trực tiếp
 - `config/alert_rules.yaml`;
 - `docs/alerts.md`;
 - source code và tests;
-- commit history.
+- commit history;
+- kết quả pytest/validator vì đã lưu thành `.txt`.
 
 Trong `submission/REPORT.md`, hãy dẫn đúng file, section hoặc commit liên quan.
 
@@ -130,7 +144,7 @@ Root cause và hành động xử lý
 
 `REPORT.md` phải ghi challenge ID, khoảng thời gian, metric cụ thể, log line/`correlation_id`, trace ID, span gây ảnh hưởng, root cause, fix action và preventive measure.
 
-`config/challenge.json` được Lab Coach gửi riêng tại CP3 và đã nằm trong `.gitignore`. Không sửa, tự tạo, force-add, commit, push, chia sẻ hoặc lấy file từ lớp khác.
+`config/challenge.json` được release trong starter K4-L3B tại CP3. Nếu fork cũ chưa có file, Sync fork/pull bản mới nhất. Không sửa, tự tạo, thay thế hoặc lấy file từ lớp khác.
 
 ## 8. Nội dung báo cáo cá nhân
 
@@ -158,7 +172,7 @@ Nội dung phải do chính học viên thực hiện và khớp với source, e
 - Source, report, trace ID hoặc evidence của học viên/lớp khác.
 - Trace/prompt lấy từ project dùng chung hoặc project của người khác.
 - Evidence giả hoặc ảnh đã chỉnh sửa làm sai lệch kết quả.
-- `config/challenge.json` hoặc nội dung challenge riêng bị commit/push/chia sẻ, hoặc file đã bị tự ý sửa.
+- `config/challenge.json` đã bị tự ý sửa, thay thế hoặc lấy từ lớp khác.
 - Ảnh dashboard trống hoặc ảnh không đọc được thông tin cần chấm.
 
 ## 10. Kiểm tra trước khi push
@@ -176,7 +190,8 @@ git log -1 --oneline
 Checklist cuối:
 
 - [ ] Source và TODO bắt buộc đã hoàn thành bằng repository cá nhân.
-- [ ] Test, log validator và dashboard validator có evidence.
+- [ ] Có `pytest.txt`, `log-validator.txt` và `dashboard-validator.txt`.
+- [ ] Có đúng 5 ảnh runtime theo bảng evidence.
 - [ ] Có tối thiểu 10 traces tự tạo trong project Langfuse cá nhân, waterfall, metadata và prompt rollback.
 - [ ] Ảnh Langfuse nhìn thấy tên project cá nhân nhưng không lộ API key/secret.
 - [ ] Dashboard đủ 6 panel; SLO/error budget và 3 alert/runbook đã hoàn thiện.

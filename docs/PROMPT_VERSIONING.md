@@ -1,10 +1,29 @@
-# Prompt versioning cơ bản
+# Prompt versioning — bản ngắn gọn
 
-Mục tiêu của phần này là biết một request đã dùng prompt nào và có thể rollback an toàn. Đây không phải bài tối ưu prompt hoặc A/B testing.
+Mục tiêu là tạo hai version trong cùng một prompt, thử từng version, đưa v2 lên `production` rồi rollback về v1.
 
-## Prompt contract
+## Ba khái niệm cần nhớ
 
-Trong project Langfuse cá nhân `day13-k4-l3b-<MSSV>`, tạo text prompt tên `day13-chat`. Prompt phải giữ ba biến:
+| Khái niệm | Trong bài lab |
+|---|---|
+| Prompt name | Luôn là `day13-chat` |
+| Version | v1 là bản cũ, v2 là bản mới |
+| Label | `baseline` → v1, `candidate` → v2, `production` → bản đang chạy |
+
+App lấy prompt theo hai dòng trong `.env`:
+
+```dotenv
+LANGFUSE_PROMPT_NAME=day13-chat
+LANGFUSE_PROMPT_LABEL=production
+```
+
+## Bước 1 — Tạo v1
+
+Trong project Langfuse cá nhân, mở **Prompt Management** và tạo **Text prompt**:
+
+- Name: `day13-chat`
+- Labels: `baseline`, `production`
+- Nội dung:
 
 ```text
 Feature={{feature}}
@@ -12,43 +31,68 @@ Docs={{docs}}
 Question={{message}}
 ```
 
-App lấy prompt theo hai biến môi trường:
+Phải giữ đúng ba biến `{{feature}}`, `{{docs}}`, `{{message}}`.
 
-```dotenv
-LANGFUSE_PROMPT_NAME=day13-chat
-LANGFUSE_PROMPT_LABEL=production
+## Bước 2 — Tạo v2
+
+Mở lại `day13-chat` và tạo version mới trong cùng prompt, không tạo prompt name khác. Ví dụ:
+
+```text
+Answer in no more than three concise bullet points.
+Feature={{feature}}
+Docs={{docs}}
+Question={{message}}
 ```
 
-Nếu Langfuse không khả dụng, app dùng template local và trace metadata ghi `prompt_source=local` hoặc `local-fallback` thay vì giả vờ đã lấy được prompt managed.
+Gắn label `candidate` cho v2. Label `latest` do Langfuse tự tạo không thay thế `candidate`.
 
-## Thao tác trên Langfuse UI
+## Bước 3 — Kiểm tra hai version
 
-Tên menu/nút trên Langfuse có thể thay đổi nhẹ theo phiên bản, nhưng luồng thao tác cần giữ như sau:
+Lần 1:
 
-1. Mở đúng project cá nhân `day13-k4-l3b-<MSSV>`.
-2. Vào khu vực quản lý prompt/prompt management.
-3. Tạo text prompt tên `day13-chat` với đủ ba biến `{{feature}}`, `{{docs}}`, `{{message}}`.
-4. Lưu version đầu tiên và gắn labels `baseline` + `production`.
-5. Tạo một version mới từ prompt đó, chỉnh nhẹ format hoặc độ dài câu trả lời, rồi gắn label `candidate`.
-6. Chạy workload với label tương ứng trong `.env`, sau đó mở trace để kiểm tra metadata `prompt_name`, `prompt_label`, `prompt_version`.
-7. Để promote, chuyển label `production` sang version mới. Để rollback, chuyển label `production` quay lại version cũ.
+1. Đặt `LANGFUSE_PROMPT_LABEL=baseline`.
+2. Restart API.
+3. Chạy `python scripts/load_test.py`.
+4. Ghi lại một trace ID có `prompt_label=baseline`, `prompt_version=1`.
 
-Điểm quan trọng: app không cần sửa code khi đổi version. Code chỉ hỏi Langfuse theo `LANGFUSE_PROMPT_NAME` và `LANGFUSE_PROMPT_LABEL`; label `production` đang trỏ tới version nào thì Langfuse quyết định.
+Lần 2:
 
-## Việc cần làm
+1. Đổi thành `LANGFUSE_PROMPT_LABEL=candidate`.
+2. Restart API và chạy lại cùng workload.
+3. Ghi lại một trace ID có `prompt_label=candidate`, `prompt_version=2`.
 
-1. Tạo version 1, gắn labels `baseline` và `production`.
-2. Tạo version 2 với một thay đổi nhỏ về format hoặc độ dài câu trả lời, gắn label `candidate`.
-3. Chạy cùng một input với `LANGFUSE_PROMPT_LABEL=baseline` và `candidate`.
-4. Mở hai trace, kiểm tra `prompt_name`, `prompt_label`, `prompt_version` và prompt link.
-5. Chuyển label `production` sang version 2, chạy lại một request.
-6. Rollback `production` về version 1 và lưu ảnh evidence.
+Hai trace ID được ghi vào `submission/REPORT.md`; không cần chụp riêng hai trace này.
 
-Không chấm prompt nào “hay hơn”. Điểm nằm ở khả năng truy xuất version, đổi label và rollback có bằng chứng.
+## Bước 4 — Promote và rollback
 
-## Evidence
+1. Chuyển label `production` từ v1 sang v2 trên Langfuse.
+2. Đặt `LANGFUSE_PROMPT_LABEL=production`, restart API và chạy một request.
+3. Mở trace mới, xác nhận `prompt_label=production`, `prompt_version=2`; giữ tab này để chụp evidence.
+4. Chuyển label `production` từ v2 về v1. Đây là rollback.
 
-- Một ảnh danh sách hai prompt version.
-- Hai trace ID chứng minh hai version/label khác nhau.
-- Một ảnh trước/sau khi đổi label hoặc rollback `production`.
-- Ghi các ID và đường dẫn ảnh vào `submission/REPORT.md`.
+## Chỉ chụp một ảnh
+
+Tên file: `submission/evidence/04-prompt-versioning.png`.
+
+1. Sau rollback, mở trace `production` v2 ở một cửa sổ Langfuse.
+2. Mở trang versions của `day13-chat` ở cửa sổ thứ hai.
+3. Đặt hai cửa sổ cạnh nhau, thu gọn sidebar và zoom 80–90%.
+4. Bên trái phải thấy trace ID, `prompt_label=production`, `prompt_version=2`.
+5. Bên phải phải thấy `day13-chat`, v1 có `baseline` + `production`, v2 có `candidate`.
+6. Chụp toàn màn hình. Không mở trang API Keys và không để lộ secret/PII.
+
+Một ảnh này chứng minh cả promote lên v2 và rollback về v1.
+
+## Nếu không thấy đúng version
+
+- `prompt_source=local`: app chưa nhận Langfuse key.
+- `prompt_source=local-fallback`: kiểm tra project, key, base URL, prompt name và label.
+- Vẫn thấy version cũ: restart API vì SDK có cache prompt.
+- Báo thiếu biến: kiểm tra đúng `feature`, `docs`, `message` với hai dấu ngoặc nhọn.
+
+## Hoàn thành khi
+
+- [ ] `day13-chat` có v1 và v2, giữ đủ ba biến.
+- [ ] Report có trace ID của baseline v1 và candidate v2.
+- [ ] Đã chạy `production` v2 và rollback `production` về v1.
+- [ ] Có đúng một ảnh `04-prompt-versioning.png` đọc được đầy đủ thông tin.

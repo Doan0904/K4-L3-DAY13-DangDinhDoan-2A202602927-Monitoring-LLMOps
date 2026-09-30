@@ -7,8 +7,8 @@
 | Thành phần | Điểm | Bằng chứng |
 |---|---:|---|
 | Nhận `x-request-id` hoặc sinh ID hợp lệ, truyền và trả lại qua response header | 6 | middleware, response header và structured log |
-| Log JSON có event, timestamp, `correlation_id` và metadata model/env/feature | 4 | `04-structured-log` và source liên quan |
-| Log validator đạt tối thiểu 80/100, không rò context giữa request | 5 | `02-log-validator` và tests |
+| Log JSON có event, timestamp, `correlation_id` và metadata model/env/feature | 4 | `01-incident-log` và source liên quan |
+| Log validator đạt tối thiểu 80/100, không rò context giữa request | 5 | `log-validator.txt` và tests |
 
 Không đạt tối đa nếu chỉ hard-code output để vượt validator hoặc log không nối được với trace.
 
@@ -18,7 +18,7 @@ Không đạt tối đa nếu chỉ hard-code output để vượt validator ho�
 |---|---:|---|
 | Có rule cho email, điện thoại Việt Nam, CCCD và thẻ thanh toán | 4 | `app/pii.py` và tests |
 | PII được scrub trước bước render/ghi file | 3 | logging processor/config và giải thích trong report |
-| Log/trace thực tế không còn PII mẫu nguyên văn | 3 | `05-pii-redaction` |
+| Log/trace thực tế không còn PII mẫu nguyên văn | 3 | `log-validator.txt`, tests và `03-incident-trace` |
 
 Ảnh chỉ chụp regex hoặc code không thay thế evidence runtime.
 
@@ -26,10 +26,10 @@ Không đạt tối đa nếu chỉ hard-code output để vượt validator ho�
 
 | Thành phần | Điểm | Bằng chứng |
 |---|---:|---|
-| Có tối thiểu 10 traces do học viên tự tạo trong project Langfuse cá nhân và nối được với log bằng `correlation_id` | 4 | `06-trace-list`, `08-trace-metadata` |
-| Trace có root, retrieval và generation đúng quan hệ cha-con; có model, token và cost | 4 | `07-trace-waterfall` |
-| Có prompt v1/v2 và trace gắn đúng name/version/label | 4 | `09-prompt-versions` và trace IDs trong report |
-| Chứng minh promote/rollback label `production` | 3 | `10-prompt-rollback` |
+| Có tối thiểu 10 traces do học viên tự tạo trong project Langfuse cá nhân và nối được với log bằng `correlation_id` | 4 | `02-trace-list`, `03-incident-trace` |
+| Trace có root, retrieval và generation đúng quan hệ cha-con; có model, token và cost | 4 | `03-incident-trace` |
+| Có prompt v1/v2 và trace gắn đúng name/version/label | 4 | `04-prompt-versioning` và trace IDs trong report |
+| Chứng minh promote/rollback label `production` | 3 | `04-prompt-versioning` |
 
 Trace không có child observation, chứa PII thô hoặc lấy từ project dùng chung/người khác không được tính.
 
@@ -37,11 +37,11 @@ Trace không có child observation, chứa PII thô hoặc lấy từ project d�
 
 | Thành phần | Điểm | Bằng chứng |
 |---|---:|---|
-| Dashboard có dữ liệu và đủ 6 panel: latency/TTFT, traffic, errors/retrieval, cost, tokens, quality | 6 | `11-dashboard-overview` |
+| Dashboard có dữ liệu và đủ 6 panel: latency/TTFT, traffic, errors/retrieval, cost, tokens, quality | 6 | `05-dashboard-incident` |
 | Có đơn vị, time range và threshold/SLO line hợp lý | 3 | dashboard runtime |
 | Một SLO và error budget được giải thích | 2 | `config/slo.yaml` và report |
 | Ba alert symptom-based có duration, severity, owner, Slack channel và runbook | 2 | `config/alert_rules.yaml`, `docs/alerts.md` |
-| Dashboard validator đạt 6/6 | 2 | `03-dashboard-validator` |
+| Dashboard validator đạt 6/6 | 2 | `dashboard-validator.txt` |
 
 Validator 6/6 nhưng không có dashboard runtime vẫn không đạt đủ điểm.
 
@@ -49,9 +49,9 @@ Validator 6/6 nhưng không có dashboard runtime vẫn không đạt đủ đi�
 
 | Thành phần | Điểm | Bằng chứng |
 |---|---:|---|
-| Ghi đúng challenge ID, metric bất thường và khoảng thời gian | 3 | `12-incident-metric` |
-| Tìm log line/`correlation_id` liên quan | 3 | `13-incident-log` |
-| Tìm trace có cùng `correlation_id` và span gây ảnh hưởng | 3 | `14-incident-trace` |
+| Ghi đúng challenge ID, metric bất thường và khoảng thời gian | 3 | `05-dashboard-incident` |
+| Tìm log line/`correlation_id` liên quan | 3 | `01-incident-log` |
+| Tìm trace có cùng `correlation_id` và span gây ảnh hưởng | 3 | `03-incident-trace` |
 | Root cause phù hợp với chuỗi evidence | 3 | report và Q&A |
 | Fix action và preventive measure khả thi | 3 | report |
 
@@ -61,7 +61,7 @@ Metric, log và trace không cùng sự cố sẽ không được tính là mộ
 
 | Thành phần | Điểm | Bằng chứng |
 |---|---:|---|
-| Tests chạy trên commit cuối | 5 | `01-pytest` |
+| Tests chạy trên commit cuối | 5 | `pytest.txt` |
 | Repository cài đặt và chạy lại được theo README | 3 | source, requirements và lệnh demo |
 | Không có secret, PII thô hoặc artifact không cần thiết | 2 | repository và checklist |
 

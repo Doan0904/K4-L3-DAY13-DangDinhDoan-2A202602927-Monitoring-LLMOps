@@ -3,11 +3,22 @@ primary_slo:
   name: fast_successful_requests
   window: 28d
   sli:
+    # Request "tốt" = trả lời thành công VÀ không chậm hơn 3000ms (khớp threshold panel latency).
+    # Request lỗi (request_failed) không có response_sent nên tự động bị tính là "xấu".
     good_event: 'event == "response_sent" and latency_ms <= 3000'
     total_event: 'event == "request_received"'
   target_percent: 99.5
   error_budget_percent: 0.5
-  note: Học viên phải giải thích hoặc điều chỉnh ngưỡng bằng baseline của mình. Ví dụ nếu có 10,000 request trong cửa sổ 28 ngày, error budget 0.5% nghĩa là tối đa 50 request được phép không đạt SLO.
+  note: >-
+    Baseline đo trên máy lab (10 sample queries, concurrency 5): latency P50 ~152ms, P95 ~153ms,
+    TTFT P95 50ms, error rate 0%. Ngưỡng 3000ms cao hơn ~20 lần baseline nên chỉ vi phạm khi có
+    sự cố thật, và giữ nguyên để khớp contract dashboard. Vì ngưỡng SLO rộng, alert latency được
+    đặt sớm hơn (P95 > 1500ms) để phát hiện regression như rag_slow (P95 ~2650ms) trước khi SLO bị vi phạm.
+  error_budget:
+    # Error budget = (100 - target) * tổng request trong cửa sổ.
+    formula: 'allowed_bad_requests = total_requests * (100 - target_percent) / 100'
+    example: '10,000 request / 28 ngày -> tối đa 50 request lỗi hoặc > 3000ms'
+    burn_rate: 'burn_rate = bad_ratio_trong_cửa_sổ_ngắn / 0.005; burn_rate > 14.4 trong 1h => đốt ~2% budget/giờ, cần page'
 guardrails:
   error_rate_pct_max: 2
   daily_cost_usd_max: 2.5
