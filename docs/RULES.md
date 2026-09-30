@@ -23,8 +23,8 @@
 
 ## 4 Challenge chính thức
 
-- Chỉ chạy challenge sau khi Lab Coach gửi riêng file cho đúng lớp tại CP3.
-- `config/challenge.json` đã được `.gitignore`: không force-add, commit, push hoặc chia sẻ file qua repository/kênh chung.
+- Chỉ chạy challenge sau khi Lab Coach thông báo mở CP3 và release file trên starter K4-L3B.
+- Nếu fork được tạo trước thời điểm release, phải Sync fork/pull mới nhất trước khi chạy.
 - Không tự tạo, sửa, thay thế hoặc lấy `config/challenge.json` từ học viên/lớp khác.
 - Evidence phải ghi challenge ID và khớp query/seed của repo đã nộp.
 - Practice scenarios được phép chạy bất kỳ lúc nào.

@@ -110,4 +110,4 @@ API mặc định chạy tại `http://127.0.0.1:8000`; health check ở `/healt
 - Không thấy trace: xác nhận key thuộc đúng project cá nhân, kiểm tra ba biến `LANGFUSE_*`, khởi động lại API rồi chạy lại load test; đợi vài giây và chọn time range gần nhất trên Langfuse.
 - Trace ghi `prompt_source=local-fallback`: kiểm tra host/key và prompt name/label trong `.env`.
 - Docker local không lên: chạy `docker compose ps`, kiểm tra Docker Desktop và tài nguyên máy; ưu tiên quay về project cá nhân trên Langfuse Cloud.
-- Challenge chưa chạy: chờ đến CP3 để nhận riêng `config/challenge.json` từ Lab Coach; không xin hoặc nhận file từ học viên/lớp khác.
+- Thiếu challenge ở CP3: trên fork chọn **Sync fork → Update branch**, sau đó chạy `git pull --ff-only` và kiểm tra lại `config/challenge.json`; không lấy file từ lớp khác.
