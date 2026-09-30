@@ -8,7 +8,7 @@
 - **MSSV:** 2A202602927
 - **Lớp:** K4-L3B
 - **Repository URL:** https://github.com/Doan0904/K4-L3-DAY13-DangDinhDoan-2A202602927-Monitoring-LLMOps
-- **Commit SHA cuối:** 33f22c08f1e927a66f4f2913b720004d97e701c8
+- **Commit SHA cuối:** 77d60c473c7693742ac20d23c5f858fd69eabfbf
 - **Challenge ID:** `day13-k4-l3b-monitoring-llmops-v1`
 - **Tên project Langfuse cá nhân:** `day13-k4-l3b-2A202602927`
 
