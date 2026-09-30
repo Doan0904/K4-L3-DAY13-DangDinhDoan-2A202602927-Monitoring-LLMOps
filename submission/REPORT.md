@@ -4,11 +4,11 @@
 
 ## 1. Thông tin học viên
 
-- **Họ và tên:** Đặng Đình Đoàn
+- **Họ và tên:** Đặng Đỉnh Đoàn
 - **MSSV:** 2A202602927
 - **Lớp:** K4-L3B
 - **Repository URL:** https://github.com/Doan0904/K4-L3-DAY13-DangDinhDoan-2A202602927-Monitoring-LLMOps
-- **Commit SHA cuối:** 77d60c473c7693742ac20d23c5f858fd69eabfbf
+- **Commit SHA cuối:** 697b846a2b6812646068df27cac3de080a3c97b3
 - **Challenge ID:** `day13-k4-l3b-monitoring-llmops-v1`
 - **Tên project Langfuse cá nhân:** `day13-k4-l3b-2A202602927`
 
